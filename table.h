@@ -29,8 +29,6 @@ class Table {
 #include <deque>
 
 class Table {
- private:
-  vector<vector<double>> table;
  public:
   ostream & Print(ostream &os) const;
 };
