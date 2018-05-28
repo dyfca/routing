@@ -37,9 +37,16 @@ ostream &RoutingMessage::Print(ostream &os) const
 RoutingMessage::RoutingMessage()
 {}
 
+RoutingMessage::RoutingMessage(const unsigned n, const map<unsigned, double> *v) {
+    nodeNum = n;
+    dv = v;
+}
 
 RoutingMessage::RoutingMessage(const RoutingMessage &rhs)
-{}
+{
+	nodeNum = rhs.nodeNum;
+    dv = rhs.dv;
+}
 
 #endif
 

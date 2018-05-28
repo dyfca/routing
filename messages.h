@@ -5,6 +5,7 @@
 
 #include "node.h"
 #include "link.h"
+#include "table.h"
 
 #if defined(GENERIC)
 class RoutingMessage {
@@ -26,8 +27,11 @@ class RoutingMessage {
 
 #if defined(DISTANCEVECTOR)
 class RoutingMessage {
+  unsigned nodeNum;
+  const map<unsigned, double> *dv;
 
   RoutingMessage();
+  RoutingMessage(const unsigned nodeNum, const map<unsigned, double> *dv);
   RoutingMessage(const RoutingMessage &rhs);
   RoutingMessage &operator=(const RoutingMessage &rhs);
 

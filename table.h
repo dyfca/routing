@@ -27,10 +27,28 @@ class Table {
 #if defined(DISTANCEVECTOR)
 
 #include <deque>
+#include <map>
+#include "link.h"
+
 
 class Table {
- public:
-  ostream & Print(ostream &os) const;
+public:
+	Table();
+	Table(unsigned nodeNum);
+
+    unsigned GetNextHop(const unsigned dest) const;
+    bool Update(const Link *link);
+    bool Update(const unsigned n, const map<unsigned, double> *v);
+    map<unsigned, double> *GetDV();
+    ostream & Print(ostream &os) const;
+
+private:
+	map<unsigned, map<unsigned, double>> rtable;
+	map<unsigned, double> neighbor;  // direct cost to neighbor
+    unsigned nodeNum;
+    
+
+
 };
 #endif
 

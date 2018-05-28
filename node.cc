@@ -5,7 +5,14 @@
 
 Node::Node(const unsigned n, SimulationContext *c, double b, double l) : 
     number(n), context(c), bw(b), lat(l) 
-{}
+{
+#if defined(LINKSTATE)
+    table = Table(n);
+#endif
+#if defined(DISTANCEVECTOR)
+    table = Table(n);
+#endif
+}
 
 Node::Node() 
 { throw GeneralException(); }
@@ -43,11 +50,12 @@ Node::~Node()
 // so that the corresponding node can recieve the ROUTING_MESSAGE_ARRIVAL event at the proper time
 void Node::SendToNeighbors(const RoutingMessage *m)
 {
+  context->SendToNeighbors(this, m)
 }
 
 void Node::SendToNeighbor(const Node *n, const RoutingMessage *m)
 {
-
+  context->SendToNeighbor(this, n, m);
 }
 
 deque<Node*> *Node::GetNeighbors()
@@ -151,6 +159,8 @@ ostream & Node::Print(ostream &os) const
 void Node::LinkHasBeenUpdated(const Link *l)
 {
   // update our table
+  if (table.Update(l))
+      SendToNeighbors(new RoutingMessage(nodeNum, table.GetDV()));
   // send out routing mesages
   cerr << *this<<": Link Update: "<<*l<<endl;
 }
@@ -158,7 +168,8 @@ void Node::LinkHasBeenUpdated(const Link *l)
 
 void Node::ProcessIncomingRoutingMessage(const RoutingMessage *m)
 {
-
+  if (table.Update(m->nodeNum, m->dv))
+      SendToNeighbors(new RoutingMessage(nodeNum, table.GetDV()));
 }
 
 void Node::TimeOut()
@@ -169,10 +180,13 @@ void Node::TimeOut()
 
 Node *Node::GetNextHop(const Node *destination) const
 {
+  unsigned nextHop = table.GetNextHop(destination->number);
+  return new Node(nextHop, 0, 0, 0);
 }
 
 Table *Node::GetRoutingTable() const
 {
+  return new Table(table);
 }
 
 
