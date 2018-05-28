@@ -85,20 +85,22 @@ bool Table::Update(const Link *link){
     	return flag;
     }
     else{
-    	for(map<unsigned, double>::const_iterator it = rtable[nodeNum].begin(); it != rtable[nodeNum].end(); ++it){
+    	for(map<unsigned, double>::iterator it = rtable[nodeNum].begin(); it != rtable[nodeNum].end(); ++it){
     		if(it->first == nodeNum)
     			continue;
     		double min = DBL_MAX;
+    		double org = it->second;
     		for(map<unsigned, double>::const_iterator it1 = neighbor.begin(); it1 != neighbor.end(); ++it1){
     			double temp;
     			if(rtable[it1->first].find(dest) == rtable[it1->first].end())
     				continue;
     			temp = it1->second + rtable[it1->first][dest];
-    			if(temp < min){
+    			if(temp < min)
     				min = temp;
-    				flag = true;
-    				rtable[nodeNum][dest] = temp;
-    			}
+    		}
+    		if(min != org){
+    			flag = true;
+    			it->second = min;
     		}
     	}
     	cout << endl << "Update: " << *this << endl;
@@ -167,6 +169,12 @@ bool Table::Update(const unsigned n, const map<unsigned, double> *v){
     	if(min != org){
     		flag = true;
     		it->second = min;
+    	}
+    }
+    for(map<unsigned, double>::iterator it = rtable[n].begin(); it != rtable[n].end(); ++it){
+    	if(rtable[nodeNum].find(it->first) == rtable[nodeNum].end()){
+    		rtable[nodeNum][it->first] = neighbor[n] + it->second;
+    		flag = true;
     	}
     }
 	cout << endl << "update_overload_after: " << *this << endl;
