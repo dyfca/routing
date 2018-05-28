@@ -50,7 +50,7 @@ Node::~Node()
 // so that the corresponding node can recieve the ROUTING_MESSAGE_ARRIVAL event at the proper time
 void Node::SendToNeighbors(const RoutingMessage *m)
 {
-  context->SendToNeighbors(this, m)
+  context->SendToNeighbors(this, m);
 }
 
 void Node::SendToNeighbor(const Node *n, const RoutingMessage *m)
@@ -160,7 +160,7 @@ void Node::LinkHasBeenUpdated(const Link *l)
 {
   // update our table
   if (table.Update(l))
-      SendToNeighbors(new RoutingMessage(nodeNum, table.GetDV()));
+      SendToNeighbors(new RoutingMessage(number, table.GetDV()));
   // send out routing mesages
   cerr << *this<<": Link Update: "<<*l<<endl;
 }
@@ -169,7 +169,7 @@ void Node::LinkHasBeenUpdated(const Link *l)
 void Node::ProcessIncomingRoutingMessage(const RoutingMessage *m)
 {
   if (table.Update(m->nodeNum, m->dv))
-      SendToNeighbors(new RoutingMessage(nodeNum, table.GetDV()));
+      SendToNeighbors(new RoutingMessage(number, table.GetDV()));
 }
 
 void Node::TimeOut()

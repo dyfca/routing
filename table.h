@@ -43,7 +43,7 @@ public:
     ostream & Print(ostream &os) const;
 
 private:
-	map<unsigned, map<unsigned, double>> rtable;
+	map<unsigned, map<unsigned, double> > rtable;
 	map<unsigned, double> neighbor;  // direct cost to neighbor
     unsigned nodeNum;
     

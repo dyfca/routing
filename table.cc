@@ -20,7 +20,7 @@ Table::Table() {}
 
 Table::Table(unsigned n){
     nodeNum = n;
-    rtable = map<unsigned, map<unsigned, double>>();
+    rtable = map<unsigned, map<unsigned, double> >();
     rtable[nodeNum][nodeNum] = 0;
     neighbor = map<unsigned, double>();
     neighbor[nodeNum] = 0;
@@ -29,13 +29,13 @@ Table::Table(unsigned n){
 unsigned Table::GetNextHop(const unsigned dest) const{
 	unsigned nextHop;
 	double a, b;
-    for(map<unsigned, map<unsigned, double>>::iterator it = rtable.begin(); it != rtable.end(); ++it){
+    for(map<unsigned, map<unsigned, double> >::const_iterator it = rtable.begin(); it != rtable.end(); ++it){
     	double cost;
     	double min = DBL_MAX;
     	if(it->first == nodeNum)
     		continue;
-    	a = neighbor[it->first];
-    	map<unsigned, double>::iterator it1; 
+    	a = neighbor.at(it->first);
+    	map<unsigned, double>::const_iterator it1; 
     	it1 = it->second.find(dest);
     	if(it1 != it->second.end())
     		b = it1->second;
@@ -63,10 +63,24 @@ bool Table::Update(const Link *link){
     else{
         for(map<unsigned, double>::iterator it = rtable[dest].begin(); it != rtable[dest].end(); ++it){
         	double temp;
-            temp = cost + it->second;
-            if(temp < rtable[nodeNum][it->first]){
-            	flag = true;
-            	rtable[nodeNum][it->first] = temp;
+        	if(it->first != dest){
+        		temp = cost + it->second;
+                if(temp < rtable[nodeNum][it->first]){
+            	    flag = true;
+            	    rtable[nodeNum][it->first] = temp;
+                }
+        	}
+            else{
+            	double min = DBL_MAX;
+                for(map<unsigned, double>::iterator it1 = neighbor.begin(); it1 != neighbor.end(); ++it1){
+                	temp = it1->second + rtable[it1->first][dest];
+                	if(temp < min)
+                		min = temp;
+                }
+                if(min != rtable[nodeNum][dest]){
+                	rtable[nodeNum][dest] = min;
+                	flag = true;
+                }
             }
         }
         return flag;
@@ -96,5 +110,6 @@ bool Table::Update(const unsigned n, const map<unsigned, double> *v){
             rtable[nodeNum][it->first] = temp;
 		}
 	}
+	return flag;
 }
 #endif

@@ -27,6 +27,7 @@ class RoutingMessage {
 
 #if defined(DISTANCEVECTOR)
 class RoutingMessage {
+public:
   unsigned nodeNum;
   const map<unsigned, double> *dv;
 
