@@ -43,13 +43,14 @@ Table::Table(unsigned n){
 unsigned Table::GetNextHop(const unsigned dest) const{
 	unsigned nextHop;
 	double a, b;
+	double min = DBL_MAX;
     for(map<unsigned, map<unsigned, double> >::const_iterator it = rtable.begin(); it != rtable.end(); ++it){
     	double cost;
-    	double min = DBL_MAX;
+
     	if(it->first == nodeNum)
     		continue;
     	a = neighbor.at(it->first);
-	//print neighbor Table
+		//print neighbor Table
 		cout << "Neighbor of " << nodeNum << " : " << endl;
 		for (map<unsigned, double>::const_iterator s = neighbor.begin(); s != neighbor.end(); ++s) {
 			cout << s->first << ": " << s->second << " , ";
@@ -63,11 +64,13 @@ unsigned Table::GetNextHop(const unsigned dest) const{
     	else
     		continue;
     	cost = a + b;
+		cout << endl << "cost: " << cost << ", min = " << min << ", it->first= " << it->first << endl;
     	if(cost <= min){
     		nextHop = it->first;
     		min = cost;
     	}
     }
+	cout << endl << endl;
     return nextHop;
 }
 
