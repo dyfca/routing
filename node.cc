@@ -181,11 +181,14 @@ void Node::TimeOut()
 Node *Node::GetNextHop(const Node *destination) const
 {
   unsigned nextHop = table.GetNextHop(destination->number);
+  cout << "GetNextHop"<<table;
+  cout << "nextHop: " << nextHop << endl;
   return new Node(nextHop, 0, 0, 0);
 }
 
 Table *Node::GetRoutingTable() const
 {
+	cout << table;
   return new Table(table);
 }
 

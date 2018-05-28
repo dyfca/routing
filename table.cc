@@ -18,10 +18,24 @@ ostream & Table::Print(ostream &os) const
 #include "float.h"
 Table::Table() {}
 
+ostream & Table::Print(ostream &os) const
+{
+	// WRITE THIS
+	os << "Print Table: "<<endl;
+	for (map<unsigned, map<unsigned, double> >::const_iterator i = rtable.begin(); i != rtable.end(); ++i) {
+		cout << "Node: " << i->first << ": " << endl;
+		for (map<unsigned, double>::const_iterator j = i->second.begin(); j != i->second.end(); ++j) {
+			cout << "Node: " << j->first << "  cost: " << j->second << ", ";
+		}
+		cout << endl;
+	}
+	return os;
+}
+
 Table::Table(unsigned n){
     nodeNum = n;
     rtable = map<unsigned, map<unsigned, double> >();
-    rtable[nodeNum][nodeNum] = 0;
+	rtable[nodeNum][nodeNum] = 0;
     neighbor = map<unsigned, double>();
     neighbor[nodeNum] = 0;
 }
@@ -35,7 +49,14 @@ unsigned Table::GetNextHop(const unsigned dest) const{
     	if(it->first == nodeNum)
     		continue;
     	a = neighbor.at(it->first);
-    	map<unsigned, double>::const_iterator it1; 
+	//print neighbor Table
+		cout << "Neighbor of " << nodeNum << " : " << endl;
+		for (map<unsigned, double>::const_iterator s = neighbor.begin(); s != neighbor.end(); ++s) {
+			cout << s->first << ": " << s->second << " , ";
+		}
+		cout << endl;
+		//
+		map<unsigned, double>::const_iterator it1; 
     	it1 = it->second.find(dest);
     	if(it1 != it->second.end())
     		b = it1->second;
@@ -83,6 +104,7 @@ bool Table::Update(const Link *link){
                 }
             }
         }
+		cout << endl << "Update: " << *this << endl;
         return flag;
         // for(map<unsigned, double>::iterator it = rtable[nodeNum].begin(); it != rtable[nodeNum].end(); ++it){
         // 	if(it->first == nodeNum)
@@ -100,16 +122,24 @@ map<unsigned, double> *Table::GetDV(){
 }
 
 bool Table::Update(const unsigned n, const map<unsigned, double> *v){
+
+	cout << endl << "update_overload_before: " << *this << endl;
+
 	bool flag = false;
 	rtable[n] = map<unsigned, double>(*v);
+	cout << endl << "update_overload_1: " << *this << endl;
 	for(map<unsigned, double>::iterator it = rtable[n].begin(); it != rtable[n].end(); ++it){
 		double temp;
 		temp = neighbor[n] + it->second;
+		if (rtable[nodeNum].find(it->first) == rtable[nodeNum].end()) {
+			rtable[nodeNum][it->first] = DBL_MAX;
+		}
 		if(temp < rtable[nodeNum][it->first]){
             flag = true;
             rtable[nodeNum][it->first] = temp;
 		}
 	}
+	cout << endl << "update_overload_after: " << *this << endl;
 	return flag;
 }
 #endif
