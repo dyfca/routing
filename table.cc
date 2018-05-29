@@ -23,11 +23,11 @@ ostream & Table::Print(ostream &os) const
 	// WRITE THIS
 	os << "Print Table: "<<endl;
 	for (map<unsigned, map<unsigned, double> >::const_iterator i = rtable.begin(); i != rtable.end(); ++i) {
-		cout << "Node: " << i->first << ": " << endl;
+		cout << "Node: " << i->first << ": ( " ;
 		for (map<unsigned, double>::const_iterator j = i->second.begin(); j != i->second.end(); ++j) {
 			cout << "Node: " << j->first << "  cost: " << j->second << ", ";
 		}
-		cout << endl;
+		cout << " )"<<endl;
 	}
 	return os;
 }
