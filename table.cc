@@ -75,18 +75,17 @@ unsigned Table::GetNextHop(const unsigned dest) const{
 }
 
 bool Table::Update(const Link *link){
-
+	cout << endl << "Before link update" << *this << endl;
 	unsigned dest = link->GetDest();
+	cout << "dest = " << dest << endl;
 	double cost = link->GetLatency();
-	/////
-	cout << endl <<"Source : "<< nodeNum << ", dest: " << dest;
-	cout << endl << "Update_before: " << *this << endl;
-	/////
+	cout << "cost = " << cost << endl;
 	bool flag = false;  // if DV is changed
 	neighbor[dest] = cost;
     if(rtable[nodeNum].find(dest) == rtable[nodeNum].end()){  // new path added
     	rtable[nodeNum][dest] = cost;
     	flag = true;
+    	cout << endl << "After link update" << *this << endl;
     	return flag;
     }
     else{
@@ -97,6 +96,8 @@ bool Table::Update(const Link *link){
     		double org = it->second;
     		for(map<unsigned, double>::const_iterator it1 = neighbor.begin(); it1 != neighbor.end(); ++it1){
     			double temp;
+    			if(it1->first == nodeNum)
+    				continue;
     			if(rtable[it1->first].find(dest) == rtable[it1->first].end())
     				continue;
     			temp = it1->second + rtable[it1->first][dest];
@@ -108,7 +109,7 @@ bool Table::Update(const Link *link){
     			it->second = min;
     		}
     	}
-    	cout << endl << "Update_after: " << *this << endl;
+    	cout << endl << "After link update" << *this << endl;
     	return flag;
     }
   //   else{
@@ -152,12 +153,13 @@ map<unsigned, double> *Table::GetDV(){
 }
 
 bool Table::Update(const unsigned n, const map<unsigned, double> *v){
-	cout << endl << nodeNum << " receive msg from " << n;
-	cout << endl << "update_overload_before: " << *this << endl;
+
+	cout << endl << "Before receive" << *this << endl;
+	cout << "Node " << n << " DV received." << endl;
 
 	bool flag = false;
 	rtable[n] = map<unsigned, double>(*v);
-	cout << endl << "update_overload_1: " << *this << endl;
+	cout << endl << "After recieve" << *this << endl;
 	for(map<unsigned, double>::iterator it = rtable[nodeNum].begin(); it != rtable[nodeNum].end(); ++it){
     	if(it->first == nodeNum)
     		continue;
@@ -182,7 +184,7 @@ bool Table::Update(const unsigned n, const map<unsigned, double> *v){
     		flag = true;
     	}
     }
-	cout << endl << "update_overload_after: " << *this << endl;
+	cout << endl << "After update" << *this << endl;
 	return flag;
 }
 #endif
