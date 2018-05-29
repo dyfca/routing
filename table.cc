@@ -167,6 +167,8 @@ bool Table::Update(const unsigned n, const map<unsigned, double> *v){
     	double org = it->second;
     	for(map<unsigned, double>::const_iterator it1 = neighbor.begin(); it1 != neighbor.end(); ++it1){
     		double temp;
+    		if(it1->first == nodeNum)
+    			continue;
     		if(rtable[it1->first].find(it->first) == rtable[it1->first].end())
     			continue;
     		temp = it1->second + rtable[it1->first][it->first];
