@@ -79,7 +79,8 @@ bool Table::Update(const Link *link){
 	unsigned dest = link->GetDest();
 	double cost = link->GetLatency();
 	/////
-	cout << endl <<"Source : "<< nodeNum << ", dest: " << dest<<endl;
+	cout << endl <<"Source : "<< nodeNum << ", dest: " << dest;
+	cout << endl << "Update_before: " << *this << endl;
 	/////
 	bool flag = false;  // if DV is changed
 	neighbor[dest] = cost;
@@ -107,7 +108,7 @@ bool Table::Update(const Link *link){
     			it->second = min;
     		}
     	}
-    	cout << endl << "Update: " << *this << endl;
+    	cout << endl << "Update_after: " << *this << endl;
     	return flag;
     }
   //   else{
