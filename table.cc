@@ -75,8 +75,12 @@ unsigned Table::GetNextHop(const unsigned dest) const{
 }
 
 bool Table::Update(const Link *link){
+
 	unsigned dest = link->GetDest();
 	double cost = link->GetLatency();
+	/////
+	cout << endl <<"Source : "<< nodeNum << ", dest: " << dest<<endl;
+	/////
 	bool flag = false;  // if DV is changed
 	neighbor[dest] = cost;
     if(rtable[nodeNum].find(dest) == rtable[nodeNum].end()){  // new path added
@@ -147,7 +151,7 @@ map<unsigned, double> *Table::GetDV(){
 }
 
 bool Table::Update(const unsigned n, const map<unsigned, double> *v){
-
+	cout << endl << nodeNum << " receive msg from " << n;
 	cout << endl << "update_overload_before: " << *this << endl;
 
 	bool flag = false;
