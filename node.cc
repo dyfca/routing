@@ -119,12 +119,18 @@ ostream & Node::Print(ostream &os) const
 
 void Node::LinkHasBeenUpdated(const Link *l)
 {
+  if(table.NewLink(l)){
+    table.UpdateTopo(l);
+    table.Dijkstra();
+    SendToNeighbors(new RoutingMessage(l));
+  }
   cerr << *this<<": Link Update: "<<*l<<endl;
 }
 
 
 void Node::ProcessIncomingRoutingMessage(const RoutingMessage *m)
 {
+  LinkHasBeenUpdated(m->link);
   cerr << *this << " Routing Message: "<<*m;
 }
 
@@ -135,14 +141,13 @@ void Node::TimeOut()
 
 Node *Node::GetNextHop(const Node *destination) const
 {
-  // WRITE
-  return 0;
+  unsigned nextHop = table.GetNextHop(destination->number);
+  return new Node(nextHop, 0, 0, 0);
 }
 
 Table *Node::GetRoutingTable() const
 {
-  // WRITE
-  return 0;
+  return new Table(table);
 }
 
 

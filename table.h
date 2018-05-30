@@ -17,11 +17,41 @@ class Table {
 
 
 #if defined(LINKSTATE)
+
+#include <deque>
+#include <map>
+#include "link.h"
+#include <set>
+
+struct info {
+    info() {}
+    info(unsigned n, double l) {
+        nextHop = n;
+        lat = l;
+    }
+    unsigned nextHop;
+    double lat;
+};
+
 class Table {
   // Students should write this class
  public:
+  Table();
+  Table(unsigned n);
+
+  bool NewLink(const Link *link);
+  void UpdateTopo(const Link *link);
+  void Dijkstra();
+  unsigned GetNextHop(unsigned dest) const;
   ostream & Print(ostream &os) const;
+private:
+  unsigned nodeNum;
+  set<unsigned> nodes;
+  map<unsigned, info> rtable; 
+  map<unsigned, map<unsigned, double> > topo;  // map<src, map<dest, c(src, dest)> >
+  deque<const Link *> links;
 };
+
 #endif
 
 #if defined(DISTANCEVECTOR)

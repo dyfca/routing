@@ -16,12 +16,16 @@ class RoutingMessage {
 
 #if defined(LINKSTATE)
 class RoutingMessage {
+public:
+  const Link *link;
 
   RoutingMessage();
+  RoutingMessage(const Link *l);
   RoutingMessage(const RoutingMessage &rhs);
   RoutingMessage &operator=(const RoutingMessage &rhs);
 
   ostream & Print(ostream &os) const;
+  
 };
 #endif
 

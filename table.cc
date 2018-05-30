@@ -11,6 +11,82 @@ ostream & Table::Print(ostream &os) const
 
 #if defined(LINKSTATE)
 
+#include "float.h"
+
+Table::Table() {}
+
+Table::Table(unsigned n) {
+  nodeNum = n;
+  links = deque<const Link *>();
+  rtable = map<unsigned, info>();
+  nodes = set<unsigned>();
+  topo = map<unsigned, map<unsigned, double> >();
+}
+
+bool Table::NewLink(const Link *link){
+  for (deque<const Link *>::const_iterator it = links.begin(); it != links.end(); ++it)
+      if ((*it)->GetSrc() == link->GetSrc() && (*it)->GetDest() == link->GetDest() && (*it)->GetLatency() == link->GetLatency())
+          return false;
+  return true;
+}
+
+void Table::UpdateTopo(const Link *link){
+  links.push_back(link);
+  unsigned dest = link->GetDest(), src = link->GetSrc();
+  nodes.insert(src);
+  nodes.insert(dest);
+  double cost = link->GetLatency();
+  topo[src][dest] = cost;
+}
+
+unsigned Table::GetNextHop(unsigned dest) const{
+  return rtable.at(dest).nextHop;
+}
+
+void Table::Dijkstra(){
+  set<unsigned> N(nodes);  // unknown
+  map<unsigned, double> D;  // shortest path value: src -> dest
+  map<unsigned, unsigned> p;  
+  D[nodeNum] = 0;
+  N.erase(nodeNum);
+  for (set<unsigned>::const_iterator it = N.begin(); it != N.end(); ++it) {  // initialization
+      if(topo[nodeNum].find(*it) != topo[nodeNum].end()){
+        D[*it] = topo[nodeNum][*it];
+        p[*it] = nodeNum;
+      }
+      else{
+        D[*it] = DBL_MAX;
+        p[*it] = -1;
+      }
+  }
+  while(!N.empty()){
+      double minimum = DBL_MAX;
+      unsigned minNode;
+      for(set<unsigned>::const_iterator it = N.begin(); it != N.end(); ++it)
+        if(D[*it] < minimum){
+          minimum = D[*it];
+          minNode = *it;
+        }
+      N.erase(minNode);
+      for(map<unsigned, double>::const_iterator it = topo[minNode].begin(); it != topo[minNode].end(); ++it){
+        if(N.find(it->first) != N.end()){
+            double temp = D[it->first];
+            D[it->first] = std::min(D[it->first], D[minNode] + it->second);
+            if(temp != D[it->first])
+              p[it->first] = minNode;
+        }
+      }
+  }
+  for(set<unsigned>::const_iterator it = nodes.begin(); it != nodes.end(); ++it){
+    if(*it != nodeNum){
+      unsigned next = *it;
+      while(p[next] != nodeNum)
+        next = p[next];
+      rtable[*it] = info(next, D[*it]);
+    }
+  }
+}
+
 #endif
 
 #if defined(DISTANCEVECTOR)
@@ -35,7 +111,7 @@ ostream & Table::Print(ostream &os) const
 Table::Table(unsigned n){
     nodeNum = n;
     rtable = map<unsigned, map<unsigned, double> >();
-	rtable[nodeNum][nodeNum] = 0;
+	  rtable[nodeNum][nodeNum] = 0;
     neighbor = map<unsigned, double>();
     neighbor[nodeNum] = 0;
 }
