@@ -20,10 +20,10 @@ public:
   const Link *link;
 
   RoutingMessage();
-  RoutingMessage(const Link *l);
+  RoutingMessage(const Link *l,int seq_num);
   RoutingMessage(const RoutingMessage &rhs);
   RoutingMessage &operator=(const RoutingMessage &rhs);
-
+  int seq;
   ostream & Print(ostream &os) const;
   
 };
@@ -34,7 +34,6 @@ class RoutingMessage {
 public:
   unsigned nodeNum;
   const map<unsigned, double> *dv;
-
   RoutingMessage();
   RoutingMessage(const unsigned nodeNum, const map<unsigned, double> *dv);
   RoutingMessage(const RoutingMessage &rhs);

@@ -20,23 +20,27 @@ Table::Table(unsigned n) {
   links = deque<const Link *>();
   rtable = map<unsigned, info>();
   nodes = set<unsigned>();
-  topo = map<unsigned, map<unsigned, double> >();
+  topo = map<unsigned, map<unsigned, pair<double,int> > >();
 }
 
-bool Table::NewLink(const Link *link){
-  for (deque<const Link *>::const_iterator it = links.begin(); it != links.end(); ++it)
-      if ((*it)->GetSrc() == link->GetSrc() && (*it)->GetDest() == link->GetDest() && (*it)->GetLatency() == link->GetLatency())
-          return false;
+bool Table::NewLink(const Link *link, int seq){
+  //for (deque<const Link *>::const_iterator it = links.begin(); it != links.end(); ++it)
+  //    if ((*it)->GetSrc() == link->GetSrc() && (*it)->GetDest() == link->GetDest() && (*it)->GetLatency() == link->GetLatency())
+  //        return false;
+	unsigned dest = link->GetDest(), src = link->GetSrc();
+	if (topo[src][dest].second >= seq) return false;
   return true;
 }
 
-void Table::UpdateTopo(const Link *link){
+int Table::UpdateTopo(const Link *link){
   links.push_back(link);
   unsigned dest = link->GetDest(), src = link->GetSrc();
   nodes.insert(src);
   nodes.insert(dest);
   double cost = link->GetLatency();
-  topo[src][dest] = cost;
+  topo[src][dest].first = cost;
+  topo[src][dest].second += 1;
+  return topo[src][dest].second;
 }
 
 unsigned Table::GetNextHop(unsigned dest) const{
@@ -51,7 +55,7 @@ void Table::Dijkstra(){
   N.erase(nodeNum);
   for (set<unsigned>::const_iterator it = N.begin(); it != N.end(); ++it) {  // initialization
       if(topo[nodeNum].find(*it) != topo[nodeNum].end()){
-        D[*it] = topo[nodeNum][*it];
+        D[*it] = topo[nodeNum][*it].first;
         p[*it] = nodeNum;
       }
       else{
@@ -68,10 +72,10 @@ void Table::Dijkstra(){
           minNode = *it;
         }
       N.erase(minNode);
-      for(map<unsigned, double>::const_iterator it = topo[minNode].begin(); it != topo[minNode].end(); ++it){
+      for(map<unsigned, pair<double,int> >::const_iterator it = topo[minNode].begin(); it != topo[minNode].end(); ++it){
         if(N.find(it->first) != N.end()){
             double temp = D[it->first];
-            D[it->first] = std::min(D[it->first], D[minNode] + it->second);
+            D[it->first] = std::min(D[it->first], D[minNode] + it->second.first);
             if(temp != D[it->first])
               p[it->first] = minNode;
         }

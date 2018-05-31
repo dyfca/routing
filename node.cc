@@ -119,18 +119,24 @@ ostream & Node::Print(ostream &os) const
 
 void Node::LinkHasBeenUpdated(const Link *l)
 {
-  if(table.NewLink(l)){
-    table.UpdateTopo(l);
+
+    int seq = table.UpdateTopo(l);
     table.Dijkstra();
-    SendToNeighbors(new RoutingMessage(l));
-  }
+    SendToNeighbors(new RoutingMessage(l,seq));
   cerr << *this<<": Link Update: "<<*l<<endl;
 }
 
 
 void Node::ProcessIncomingRoutingMessage(const RoutingMessage *m)
 {
-  LinkHasBeenUpdated(m->link);
+	const Link* l = m->link;
+	int seq = m->seq;
+	if (table.NewLink(l,seq)) {
+		table.UpdateTopo(l);
+		table.Dijkstra();
+		SendToNeighbors(new RoutingMessage(l,seq));
+	}
+
   cerr << *this << " Routing Message: "<<*m;
 }
 

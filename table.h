@@ -39,8 +39,8 @@ class Table {
   Table();
   Table(unsigned n);
 
-  bool NewLink(const Link *link);
-  void UpdateTopo(const Link *link);
+  bool NewLink(const Link *link,int seq);
+  int UpdateTopo(const Link *link);
   void Dijkstra();
   unsigned GetNextHop(unsigned dest) const;
   ostream & Print(ostream &os) const;
@@ -48,7 +48,7 @@ private:
   unsigned nodeNum;
   set<unsigned> nodes;
   map<unsigned, info> rtable; 
-  map<unsigned, map<unsigned, double> > topo;  // map<src, map<dest, c(src, dest)> >
+  map<unsigned, map<unsigned, pair<double, int> > > topo;  // map<src, map<dest, c(src, dest)> >
   deque<const Link *> links;
 };
 

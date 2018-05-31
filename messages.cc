@@ -20,8 +20,9 @@ ostream &RoutingMessage::Print(ostream &os) const
 RoutingMessage::RoutingMessage()
 {}
 
-RoutingMessage::RoutingMessage(const Link *l) {
+RoutingMessage::RoutingMessage(const Link *l, int seq_num) {
     link = l;
+	seq = seq_num;
 }
 
 RoutingMessage::RoutingMessage(const RoutingMessage &rhs)
