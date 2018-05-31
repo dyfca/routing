@@ -132,7 +132,7 @@ void Node::ProcessIncomingRoutingMessage(const RoutingMessage *m)
 	const Link* l = m->link;
 	int seq = m->seq;
 	if (table.NewLink(l,seq)) {
-		table.UpdateTopo(l);
+		table.UpdateTopo(l,seq);
 		table.Dijkstra();
 		SendToNeighbors(new RoutingMessage(l,seq));
 	}

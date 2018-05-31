@@ -41,6 +41,7 @@ class Table {
 
   bool NewLink(const Link *link,int seq);
   int UpdateTopo(const Link *link);
+  int UpdateTopo(const Link *link, int seq);
   void Dijkstra();
   unsigned GetNextHop(unsigned dest) const;
   ostream & Print(ostream &os) const;

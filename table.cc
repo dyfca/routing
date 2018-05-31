@@ -43,6 +43,17 @@ int Table::UpdateTopo(const Link *link){
   return topo[src][dest].second;
 }
 
+int Table::UpdateTopo(const Link *link,int seq) {
+	links.push_back(link);
+	unsigned dest = link->GetDest(), src = link->GetSrc();
+	nodes.insert(src);
+	nodes.insert(dest);
+	double cost = link->GetLatency();
+	topo[src][dest].first = cost;
+	topo[src][dest].second = seq;
+	return topo[src][dest].second;
+}
+
 unsigned Table::GetNextHop(unsigned dest) const{
   return rtable.at(dest).nextHop;
 }
